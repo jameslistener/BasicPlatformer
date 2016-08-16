@@ -25,7 +25,7 @@ template <class T> class List
 	Element <T> * head;
 	Element <T> * tail;
 	Element <T> * pointer;
-	uint listsize;
+	int listsize;
 public:
 	List();
 	~List();
@@ -33,7 +33,7 @@ public:
 	void clear();
 	void deform();
 
-	uint getSize();
+	int getSize();
 
 	void push(T *o);
 	void push(Element<T> *e);
@@ -137,7 +137,7 @@ void List<T>::deform()
 }
 
 template<class T>
-uint List<T>::getSize()
+int List<T>::getSize()
 {
 	return listsize;
 }
