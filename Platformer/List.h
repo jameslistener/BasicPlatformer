@@ -212,6 +212,8 @@ T * List<T>::lookFirstObj()
 template<class T>
 bool List<T>::removeElem(uint uid)
 {
+	if (uid == 0) return false;
+	if (!head) return false;
 	Element<T> *curr = head;
 	Element<T> *currNext;
 	Element<T> *currPrev;
@@ -230,6 +232,8 @@ bool List<T>::removeElem(uint uid)
 template<class T>
 bool List<T>::removeObj(uint uid)
 {
+	if (uid == 0) return false;
+	if (!head) return false;
 	Element<T> *curr = head;
 	Element<T> *currNext;
 	Element<T> *currPrev;
@@ -249,6 +253,8 @@ bool List<T>::removeObj(uint uid)
 template<class T>
 Element<T> * List<T>::pinchElem(uint uid)
 {
+	if (uid == 0) return NULL;
+	if (!head) return NULL;
 	Element<T> *curr = head;
 	while (curr->getObj()->UID() != uid && curr)
 		curr = curr->next;
@@ -262,6 +268,8 @@ Element<T> * List<T>::pinchElem(uint uid)
 template<class T>
 T * List<T>::pinchObj(uint uid)
 {
+	if (uid == 0) return NULL;
+	if (!head) return NULL;
 	Element<T> *curr = head;
 	while (curr->getObj()->UID() != uid && curr)
 		curr = curr->next;
@@ -277,6 +285,8 @@ T * List<T>::pinchObj(uint uid)
 template<class T>
 Element<T>* List<T>::lookElem(uint uid)
 {
+	if (uid == 0) return NULL;
+	if (!head) return NULL;
 	Element<T> *curr = head;
 	while (curr->getObj()->UID() != uid && curr)
 		curr = curr->next;
@@ -286,6 +296,8 @@ Element<T>* List<T>::lookElem(uint uid)
 template<class T>
 T * List<T>::lookObj(uint uid)
 {
+	if (uid == 0) return NULL;
+	if (!head) return NULL;
 	Element<T> *curr = head;
 	while (curr->getObj()->UID() != uid && curr)
 		curr = curr->next;

@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<classes>
+	<class>StaticBlock</class>
+	<class>AnimatedBlock</class>
+	<class>StaticDecoration</class>
+	<class>AnimatedDecoration</class>
+	<class>Character</class>
+	<class>Monster</class>
+	<class>VisualEffect</class>
+</classes>
+<animtypes>
+	<t>IDLE</t>
+	<t>WALK</t>
+	<t>RUN</t>
+	<t>JUMP</t>
+	<t>HIT</t>
+	<t>DEATH</t>
+	<t>DO_SOMETHING</t>
+</animtypes>
+<animsubtypes>
+	<st>LEFT</st>
+	<st>RIGHT</st>
+	<st>FRONT</st>
+	<st>BACK</st>
+	<st>FIRST</st>
+	<st>SECOND</st>
+	<st>THIRD</st>
+</animsubtypes>
+<types>
+	<animatedobjecttype class="Character" name="Jack" texture="images/jackTS.png" width="80" height="96">
+		<animation timespan="0" type="IDLE" subtype="RIGHT" slides="1">
+			<slide>0,192,80,96,0,0</slide>
+		</animation>
+		<animation timespan="0" type="IDLE" subtype="LEFT" slides="1">
+			<slide>0,0,80,96,0,0</slide>
+		</animation>
+		<animation timespan="200" type="WALK" subtype="RIGHT"  slides="4">
+			<slide>80,192,80,96,0,0</slide>
+			<slide>160,192,80,96,0,0</slide>
+			<slide>240,192,80,96,0,0</slide>
+			<slide>160,192,80,96,0,0</slide>
+		</animation>
+		<animation timespan="200" type="WALK" subtype="LEFT" slides="4">
+			<slide>80,96,80,96,0,0</slide>
+			<slide>160,96,80,96,0,0</slide>
+			<slide>240,96,80,96,0,0</slide>
+			<slide>160,96,80,96,0,0</slide>
+		</animation>
+	</animatedobjecttype>
+	<animatedobjecttype class="StaticBlock" name="Ground" texture="images/basic.png" width="50" height="50">
+		<animation timespan="0" type="IDLE" subtype="FIRST" slides="1">
+			<slide>25,15,50,50,0,0</slide>
+		</animation>
+	</animatedobjecttype>
+</types>

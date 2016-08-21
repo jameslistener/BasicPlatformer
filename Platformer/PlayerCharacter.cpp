@@ -1,11 +1,10 @@
 #include "PlayerCharacter.h"
 
 
-PlayerCharacter::PlayerCharacter(Vector2f _coords, Vector2f _size, int countOfAnims, Animation ** anims) : DrawableObject(_coords)
+PlayerCharacter::PlayerCharacter(Vector2f _coords, Vector2f _size) : DrawableObject(_coords)
 {
 	size = _size;
-	for (int i = countOfAnims; i > 0; i--)
-		animations.push(anims[i]);
+	initFromAOType(Mgr.getAnimationLoader()->getAOType("Character", "Jack"));
 }
 
 PlayerCharacter::~PlayerCharacter()

@@ -6,14 +6,11 @@ Block::Block() : DrawableObject()
 {
 }
 
-Block::Block(Vector2f _coords, Vector2f _size, Texture * t, IntRect & ac) : DrawableObject(_coords)
+Block::Block(Vector2f _coords, Vector2f _size) : DrawableObject(_coords)
 {
 	size = _size;
-	IntRect * acs = new IntRect(ac);
-	Animation * a = new Animation(this, A_T_IDLE, 1, 1, 0, t, acs);
-	delete acs;
-	addAnimation(a);
-	a->startAnimation();
+	initFromAOType(Mgr.getAnimationLoader()->getAOType("StaticBlock", "Ground"));
+	playAnimation("IDLE", "FIRST");
 }
 
 

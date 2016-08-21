@@ -18,6 +18,12 @@ GameManager::~GameManager()
 {
 }
 
+void GameManager::initAnimationLoader(char * xmlfilename)
+{
+	animLoader = new AnimationLoader(xmlfilename);
+	animLoader->loadTextures();
+}
+
 uint GameManager::getNewUID()
 {
 	return ++idCounter;
@@ -28,8 +34,14 @@ void GameManager::addNewObject(GameObject * go)
 	objs.push(go);
 }
 
+AnimationLoader * GameManager::getAnimationLoader()
+{
+	return animLoader;
+}
+
 void GameManager::Update(uint time_elapsed)
 {
+	//time_elapsed /= 1000;
 	for (GameObject * curr = objs.startLoopObj(); curr != NULL; curr = objs.nextStepObj())
 		curr->Update(time_elapsed);
 }

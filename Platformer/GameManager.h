@@ -5,6 +5,7 @@ class Msg;
 #include <SFML/Graphics.hpp>
 #include "GameObject.h"
 #include "List.h"
+#include "AnimationLoader.h"
 
 #define NULL 0
 
@@ -29,12 +30,17 @@ private:
 
 	void SendToAll(Msg *m);
 
+	AnimationLoader * animLoader;
+
 public:
 	GameManager();
 	~GameManager();
 
+	void initAnimationLoader(char * xmlfilename = NULL);
+
 	uint getNewUID();
 	void addNewObject(GameObject * go);
+	AnimationLoader * getAnimationLoader();
 
 	void Update(uint time_elapsed);
 	void SendMsg(Msg *m);

@@ -7,7 +7,7 @@ class Block : public DrawableObject
 	Vector2f size; // x is width, y is height
 public:
 	Block();
-	Block(Vector2f _coords, Vector2f _size, Texture * t, IntRect &ac);
+	Block(Vector2f _coords, Vector2f _size);
 	~Block();
 
 	void Update(uint time_elapsed);

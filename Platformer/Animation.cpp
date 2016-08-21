@@ -1,6 +1,7 @@
 #include "Animation.h"
+#include "DrawableObject.h"
 
-Animation::Animation(DrawableObject * obj, int _type, int _subtype, int _slides, uint _timespan, Texture * _texture, IntRect * _coords, Vector2i * _delta)
+Animation::Animation(DrawableObject * obj, RegistratedString * _type, RegistratedString * _subtype, int _slides, uint _timespan, Texture * _texture, IntRect * _coords, Vector2i * _delta)
 {
 	type = _type;
 	subtype = _subtype;
@@ -42,6 +43,13 @@ Animation::~Animation()
 	delete[] coords;
 	delete[] delta;
 }
+/*
+int Animation::animationType(char * name)
+{
+	if		(strcmp(name, "IDLE") == 0) return A_T_IDLE;
+	else if (strcmp(name, "IDLE") == 0) return A_T_IDLE;
+	return 0;
+}*/
 
 void Animation::setOwner(DrawableObject * o)
 {
@@ -50,7 +58,7 @@ void Animation::setOwner(DrawableObject * o)
 
 uint Animation::UID()
 {
-	return type + subtype;
+	return type->UID()*ANIM_TYPE_MULTIPLIER + subtype->UID();
 }
 
 void Animation::startAnimation()

@@ -1,10 +1,12 @@
-#include <chrono>
+//#include <chrono>
 #include <iostream>
 #include "GameManager.h"
 #include "GameObject.h"
 #include "DrawableObject.h"
 #include "Block.h"
 #include "PlayerCharacter.h"
+#include "main.h"
+#include <string.h>
 
 GameManager Mgr;
 sf::RenderWindow window;
@@ -15,12 +17,7 @@ int main()
 
 	window.create(VideoMode(500, 500), L"Block");
 
-	Texture tileset, characterTS;
-	
-	if (tileset.loadFromFile("images/basic.png"))
-		printf("picture loaded");
-	else
-		printf("picture NOT loaded");
+	Mgr.initAnimationLoader(NULL);
 		
 	Vector2f coords = Vector2f(0, 0);
 	Vector2f size = Vector2f(50, 50);
@@ -28,37 +25,40 @@ int main()
 		for (int j = 0; j < 10; j++)
 		{
 			coords.x = j * 50; coords.y = i * 50;
-			//Mgr.addNewObject(new Block(coords, size, &tileset, IntRect(25, 15, 50, 50)));
+			Mgr.addNewObject(new Block(coords, size));
 		}
-	if (characterTS.loadFromFile("images/jackTS.png"))
-		printf("picture loaded");
-	else
-		printf("picture NOT loaded");
-	IntRect * charIdleL = new IntRect(0, 0, 80, 96);
-	IntRect * charIdleR = new IntRect(0, 192, 80, 96);
-	IntRect * charGoL = new IntRect [4];
-	charGoL[0] = IntRect(80, 0, 80, 96);
-	charGoL[1] = IntRect(160, 0, 80, 96);
-	charGoL[2] = IntRect(240, 0, 80, 96);
-	charGoL[3] = IntRect(160, 0, 80, 96);
-	IntRect * charGoR = new IntRect[4];
-	charGoR[0] = IntRect(80, 192, 80, 96);
-	charGoR[1] = IntRect(160, 192, 80, 96);
-	charGoR[2] = IntRect(240, 192, 80, 96);
-	charGoR[3] = IntRect(160, 192, 80, 96);
-	PlayerCharacter * pc = new PlayerCharacter(Vector2f(100,100), Vector2f(80,96), 0, NULL);
-	pc->addAnimation(new Animation(pc, A_T_IDLE, A_S_LEFT, 1, 0, &characterTS, charIdleL));
-	pc->addAnimation(new Animation(pc, A_T_IDLE, A_S_RIGHT, 1, 0, &characterTS, charIdleR));
-	pc->addAnimation(new Animation(pc, A_T_WALK, A_S_LEFT, 4, 100000, &characterTS, charGoL));
-	pc->addAnimation(new Animation(pc, A_T_WALK, A_S_RIGHT, 4, 100000, &characterTS, charGoR));
-	pc->playAnimation(A_T_WALK, A_S_RIGHT);
+	
+	PlayerCharacter * pc = new PlayerCharacter(Vector2f(100,100), Vector2f(80,96));
+	pc->playAnimation("WALK", "LEFT");
+	Mgr.addNewObject(pc);
+	pc = new PlayerCharacter(Vector2f(100, 300), Vector2f(80, 96));
+	pc->playAnimation("WALK", "RIGHT");
+	Mgr.addNewObject(pc);
+	pc = new PlayerCharacter(Vector2f(300, 300), Vector2f(80, 96));
+	pc->playAnimation("WALK", "LEFT");
+	Mgr.addNewObject(pc);
+	pc = new PlayerCharacter(Vector2f(300, 100), Vector2f(80, 96));
+	pc->playAnimation("WALK", "RIGHT");
 	Mgr.addNewObject(pc);
 
+
 	
-	auto start = std::chrono::high_resolution_clock::now();
+	/*auto start = std::chrono::high_resolution_clock::now();
 	auto elapsed = std::chrono::high_resolution_clock::now() - start;
 	uint micros = 1;
-	start = std::chrono::high_resolution_clock::now();
+	start = std::chrono::high_resolution_clock::now();*/
+	Clock clock;
+	uint micros = clock.getElapsedTime().asMicroseconds();
+	clock.restart();
+	
+	Font font;
+	font.loadFromFile("CyrilicOld.ttf");
+	Text text("", font, 20);
+	text.setColor(Color::Red);//покрасили текст в красный. если убрать эту строку, то по умолчанию он белый
+	text.setStyle(Text::Bold);
+	text.setPosition(20, 20);
+	char fps[10];
+	int fps_counter = 0, fps_av = 0, fps_elapsed = 0;;
 
 	while (window.isOpen())
 	{
@@ -70,13 +70,30 @@ int main()
 			if (event.type == Event::Closed)
 				window.close();
 		}
-		elapsed = std::chrono::high_resolution_clock::now() - start;
+		/*elapsed = std::chrono::high_resolution_clock::now() - start;
 		micros = (uint) std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
-		start = std::chrono::high_resolution_clock::now();
+		start = std::chrono::high_resolution_clock::now();*/
+		micros = clock.getElapsedTime().asMicroseconds();
+		clock.restart();
 		
 		Mgr.Update(micros);
 		window.clear();
 		Mgr.Draw();
+		
+		
+		fps_av += 1000000 / micros;
+		fps_counter++;
+		fps_elapsed += micros;
+		if (fps_elapsed>=500000)
+		{
+			_itoa_s(fps_av / fps_counter, fps, 10);
+			text.setString(fps);
+			fps_av = 0;
+			fps_counter = 0;
+			fps_elapsed = 0;
+		}
+
+		window.draw(text);
 		window.display();
 	}
 

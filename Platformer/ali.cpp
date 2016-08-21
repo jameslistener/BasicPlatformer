@@ -88,7 +88,7 @@
  * could be read incorrectly (say a markup (like a comment) is not 
  * recognized as closed).  Or the code is not following the XML spec in a 
  * way needed for the document.  Or the formatting information could be 
- * wrong or passed incorrectly to sscanf, or the sscanf function is wrong.
+ * wrong or passed incorrectly to sscanf_s, or the sscanf_s function is wrong.
  * 
  * 
  */
@@ -149,7 +149,7 @@
  */
 #include "ali_config.h"
 #include "ali.h"
-
+#include <iostream>
 
 #ifdef __cplusplus
 using namespace std;
@@ -1350,11 +1350,11 @@ decode_string(
                if (*start == 'x')
                {
                   start += 1;
-                  sscanf(start, "%lx", &v);
+                  sscanf_s(start, "%lx", &v);
                }
                else
                {
-                  sscanf(start, "%ld", (long int *)&v);
+                  sscanf_s(start, "%ld", (long int *)&v);
                }
                
                /* a utf32to8 converter. */
@@ -1810,15 +1810,15 @@ parse_xml_declaration(
 
            /* Compare the encoding to those we know about to identify them. 
             * This overrides earlier encoding gueses. */
-           if (encoding == NULL || strnicmp(encoding, "UTF-8", 5) == 0)
+           if (encoding == NULL || _strnicmp(encoding, "UTF-8", 5) == 0)
            {
                doc->encoding = encoding_UTF_8;
            }
-           else if (strnicmp(encoding, "ISO-8859-", 9) == 0)
+           else if (_strnicmp(encoding, "ISO-8859-", 9) == 0)
            {
                doc->encoding = encoding_ISO_8859_N;
            }
-           else if (strnicmp(encoding, "US-ASCII", 8) == 0)
+           else if (_strnicmp(encoding, "US-ASCII", 8) == 0)
            {
                doc->encoding = encoding_US_ASCII;
            }
@@ -1828,13 +1828,13 @@ parse_xml_declaration(
            standalone = get_next_xml_declaration(doc, element, "standalone");
            if (standalone != NULL)
            {
-               if (strnicmp(standalone, "yes", 3) == 0)
+               if (_strnicmp(standalone, "yes", 3) == 0)
                {
                    doc->standalone = true;
                    doc->standalone_declared = true;
                    printf("standalone=yes\n");
                }
-               else if (strnicmp(standalone, "no", 2) == 0)
+               else if (_strnicmp(standalone, "no", 2) == 0)
                {
                    doc->standalone = false;
                    doc->standalone_declared = true;
@@ -2210,31 +2210,31 @@ get_markup_name(ali_char name, int32_t length, int8_t type)
    {
       /* "/name" */
       result = (char *) malloc(1 + length + 1);
-      strcpy(result, "/");
-      strncat(result, name, length);
+      strcpy_s(result, 2, "/");
+      strncat_s(result, 1 + length + 1, name, length);
       result[1 + length] = '\0';
    }
    else if (type == tag_attribute)
    {
       /* "[@name]" */
       result = (char *) malloc(2 + length + 1 + 1);
-      strcpy(result, "[@");
-      strncat(result, name, length);
-      strcpy(&result[2 + length], "]");
+      strcpy_s(result, 3, "[@");
+      strncat_s(result, 2 + length + 1 + 1, name, length);
+      strcpy_s(&result[2 + length], 2, "]");
    }
    else if (type == tag_comment)
    {
       /* "/comment()" */
       result = (char *) malloc(10 + 1);
-      strcpy(result, "/comment()");
+      strcpy_s(result, 11, "/comment()");
    }
    else if (type == tag_instruction)
    {
       /* "/processing-instruction(name)" */
       result = (char *) malloc(24 + length + 1 + 1);
-      strcpy(result, "/processing-instruction(");
-      strncat(result, name, length);
-      strcpy(&result[24 + length], ")");
+      strcpy_s(result, 25, "/processing-instruction(");
+      strncat_s(result, 24 + length + 1 + 1, name, length);
+      strcpy_s(&result[24 + length], 2, ")");
    }
 
    return result;
@@ -2263,10 +2263,11 @@ get_element_name(ali_element_info *current_element, ali_element_ref path_end)
    /* name = name + last_name */
    if (name != NULL && last_name != NULL)
    {
+	  int tmp = strlen(name) + 1 + strlen(last_name) + 1;
       name = (char *) realloc(name, strlen(name) + 1 + strlen(last_name) + 1);
       if (name != NULL)
       {
-         strcat(name, last_name);
+         strcat_s(name, tmp, last_name);
       }
    }
 
@@ -2301,10 +2302,11 @@ build_element_path(
          /* *buffer = *buffer + next_name */
          if (*buffer != NULL && next_name != NULL)
          {
+			int tmp = strlen(*buffer) + 1 + strlen(next_name) + 1;
             *buffer = (char *) realloc(*buffer, strlen(*buffer) + 1 + strlen(next_name) + 1);
             if (*buffer != NULL)
             {
-               strcat(*buffer, next_name);
+               strcat_s(*buffer, tmp, next_name);
             }
          }
 
@@ -2471,7 +2473,7 @@ ali_open(
          doc->options = options;
 
 
-         doc->file_in = fopen(file_name, "r");
+         fopen_s(&doc->file_in, file_name, "r");
 
          if (doc->file_in)
          {
@@ -3126,11 +3128,11 @@ parse_input_format(
                      if (number[0] != '\0')
                      {
                         if (long_double_arg)
-                           sscanf(number, sscanf_format, num_long_double);
+                           sscanf_s(number, sscanf_format, num_long_double);
                         else if (long_arg)
-                           sscanf(number, sscanf_format, num_double);
+                           sscanf_s(number, sscanf_format, num_double);
                         else
-                           sscanf(number, sscanf_format, num_float);
+                           sscanf_s(number, sscanf_format, num_float);
                      }
                      else if (!element_optional && doc->current_element->new_element)
                      {
@@ -3216,13 +3218,13 @@ parse_input_format(
                      if (number[0] != '\0')
                      {
                         if (long_arg)
-                           sscanf(number, sscanf_format, num_long);
+                           sscanf_s(number, sscanf_format, num_long);
                         else if (short_arg)
-                           sscanf(number, sscanf_format, num_short);
+                           sscanf_s(number, sscanf_format, num_short);
                         else if (conversion == 'c' || byte_arg)
-                           sscanf(number, sscanf_format, num_char);
+                           sscanf_s(number, sscanf_format, num_char);
                         else
-                           sscanf(number, sscanf_format, num_int);
+                           sscanf_s(number, sscanf_format, num_int);
                      }
                      else if (!element_optional && doc->current_element->new_element)
                      {
@@ -3239,7 +3241,7 @@ parse_input_format(
                      result = true;
                   }
 
-                  /* sscanf it */
+                  /* sscanf_s it */
                   break;
                }
                /* return the markup's path */
@@ -3265,9 +3267,9 @@ parse_input_format(
                   else
                   {
                      if (width == 0)
-                        strcpy(strP, content);
+                        strcpy_s(strP, strlen(strP), content);
                      else
-                        strncpy(strP, content, width);
+                        strncpy_s(strP, strlen(strP), content, width);
 
                      free(content);
                   }
